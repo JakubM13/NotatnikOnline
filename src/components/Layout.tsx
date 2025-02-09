@@ -39,7 +39,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               Publiczne Notatki
             </Link>
             {user && (
-              <Link to="/dashboard" className="hover:text-gray-600 transition-colors">
+              <Link to="/" className="hover:text-gray-600 transition-colors">
                 Moje Notatki
               </Link>
             )}
@@ -75,7 +75,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               </Link>
               {user && (
                 <Link
-                  to="/dashboard"
+                  to="/"
                   className="hover:text-gray-600 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
