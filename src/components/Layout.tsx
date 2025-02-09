@@ -1,11 +1,20 @@
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -27,17 +36,29 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
           {/* Desktop navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             <Link to="/public-notes" className="hover:text-gray-600 transition-colors">
-              Public Notes
+              Publiczne Notatki
             </Link>
-            <Link to="/dashboard" className="hover:text-gray-600 transition-colors">
-              Dashboard
-            </Link>
-            <Button asChild variant="secondary">
-              <Link to="/login">Sign In</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/register">Get Started</Link>
-            </Button>
+            {user && (
+              <Link to="/dashboard" className="hover:text-gray-600 transition-colors">
+                Moje Notatki
+              </Link>
+            )}
+            {!loading && (
+              user ? (
+                <Button onClick={handleLogout} variant="secondary">
+                  Wyloguj się
+                </Button>
+              ) : (
+                <>
+                  <Button asChild variant="secondary">
+                    <Link to="/auth">Zaloguj się</Link>
+                  </Button>
+                  <Button asChild>
+                    <Link to="/auth">Zarejestruj się</Link>
+                  </Button>
+                </>
+              )
+            )}
           </div>
         </nav>
 
@@ -50,25 +71,44 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
                 className="hover:text-gray-600 transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Public Notes
+                Publiczne Notatki
               </Link>
-              <Link
-                to="/dashboard"
-                className="hover:text-gray-600 transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Dashboard
-              </Link>
-              <Button asChild variant="secondary" className="w-full">
-                <Link to="/login" onClick={() => setIsMenuOpen(false)}>
-                  Sign In
+              {user && (
+                <Link
+                  to="/dashboard"
+                  className="hover:text-gray-600 transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Moje Notatki
                 </Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link to="/register" onClick={() => setIsMenuOpen(false)}>
-                  Get Started
-                </Link>
-              </Button>
+              )}
+              {!loading && (
+                user ? (
+                  <Button 
+                    onClick={() => {
+                      handleLogout();
+                      setIsMenuOpen(false);
+                    }} 
+                    variant="secondary"
+                    className="w-full"
+                  >
+                    Wyloguj się
+                  </Button>
+                ) : (
+                  <>
+                    <Button asChild variant="secondary" className="w-full">
+                      <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                        Zaloguj się
+                      </Link>
+                    </Button>
+                    <Button asChild className="w-full">
+                      <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
+                        Zarejestruj się
+                      </Link>
+                    </Button>
+                  </>
+                )
+              )}
             </div>
           </div>
         )}
