@@ -54,8 +54,8 @@ const Index = () => {
       if (error) throw error;
 
       toast({
-        title: "Success!",
-        description: "Your note has been created.",
+        title: "Sukces!",
+        description: "Twoja notatka została utworzona.",
       });
 
       setTitle("");
@@ -64,8 +64,8 @@ const Index = () => {
       refetch();
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to create note. Please try again.",
+        title: "Błąd",
+        description: "Nie udało się utworzyć notatki. Spróbuj ponownie.",
         variant: "destructive",
       });
     }
@@ -80,20 +80,20 @@ const Index = () => {
             <section className="py-20 text-center animate-fade-down">
               <div className="max-w-3xl mx-auto">
                 <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                  Your thoughts, organized beautifully
+                  Twoje myśli, pięknie uporządkowane
                 </h1>
                 <p className="text-xl text-gray-600 mb-8">
-                  A minimalist note-taking experience designed for clarity and simplicity.
+                  Minimalistyczne narzędzie do notowania, zaprojektowane z myślą o przejrzystości i prostocie.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button asChild size="lg" className="group">
                     <Link to="/auth">
-                      Get Started
+                      Rozpocznij
                       <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="secondary">
-                    <Link to="/public-notes">View Public Notes</Link>
+                    <Link to="/public-notes">Zobacz publiczne notatki</Link>
                   </Button>
                 </div>
               </div>
@@ -104,23 +104,23 @@ const Index = () => {
               <div className="grid md:grid-cols-3 gap-8">
                 <div className="glass p-6 rounded-lg animate-slide-up-fade" style={{ animationDelay: "0ms" }}>
                   <BookText className="h-12 w-12 mb-4 text-primary" />
-                  <h3 className="text-xl font-semibold mb-2">Rich Text Editor</h3>
+                  <h3 className="text-xl font-semibold mb-2">Edytor tekstu</h3>
                   <p className="text-gray-600">
-                    Create beautiful notes with our intuitive rich text editor. Format your content exactly how you want it.
+                    Twórz piękne notatki za pomocą naszego intuicyjnego edytora. Formatuj treść dokładnie tak, jak chcesz.
                   </p>
                 </div>
                 <div className="glass p-6 rounded-lg animate-slide-up-fade" style={{ animationDelay: "150ms" }}>
                   <Lock className="h-12 w-12 mb-4 text-primary" />
-                  <h3 className="text-xl font-semibold mb-2">Private & Secure</h3>
+                  <h3 className="text-xl font-semibold mb-2">Prywatność i bezpieczeństwo</h3>
                   <p className="text-gray-600">
-                    Your notes are private by default. Choose what to share and what to keep personal.
+                    Twoje notatki są domyślnie prywatne. Wybierz, co chcesz udostępnić, a co zachować dla siebie.
                   </p>
                 </div>
                 <div className="glass p-6 rounded-lg animate-slide-up-fade" style={{ animationDelay: "300ms" }}>
                   <Users className="h-12 w-12 mb-4 text-primary" />
-                  <h3 className="text-xl font-semibold mb-2">Collaborative</h3>
+                  <h3 className="text-xl font-semibold mb-2">Współpraca</h3>
                   <p className="text-gray-600">
-                    Share your notes with the community. Learn and grow together.
+                    Udostępniaj swoje notatki społeczności. Ucz się i rozwijaj razem z innymi.
                   </p>
                 </div>
               </div>
@@ -129,10 +129,10 @@ const Index = () => {
         ) : (
           <div className="py-10">
             <div className="max-w-2xl mx-auto">
-              <h1 className="text-3xl font-bold mb-8">Create a New Note</h1>
+              <h1 className="text-3xl font-bold mb-8">Utwórz nową notatkę</h1>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
+                  <Label htmlFor="title">Tytuł</Label>
                   <Input
                     id="title"
                     value={title}
@@ -141,7 +141,7 @@ const Index = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="content">Content</Label>
+                  <Label htmlFor="content">Treść</Label>
                   <Textarea
                     id="content"
                     value={content}
@@ -155,16 +155,16 @@ const Index = () => {
                     checked={isPublic}
                     onCheckedChange={setIsPublic}
                   />
-                  <Label htmlFor="public">Make this note public</Label>
+                  <Label htmlFor="public">Ustaw notatkę jako publiczną</Label>
                 </div>
                 <Button type="submit" className="w-full">
-                  Create Note
+                  Utwórz notatkę
                 </Button>
               </form>
 
               {notes && notes.length > 0 && (
                 <div className="mt-12">
-                  <h2 className="text-2xl font-bold mb-6">Your Notes</h2>
+                  <h2 className="text-2xl font-bold mb-6">Twoje notatki</h2>
                   <div className="space-y-4">
                     {notes.map((note) => (
                       <div key={note.id} className="glass p-4 rounded-lg">
@@ -178,7 +178,7 @@ const Index = () => {
                           </div>
                           {note.is_public && (
                             <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                              Public
+                              Publiczna
                             </span>
                           )}
                         </div>
@@ -196,3 +196,4 @@ const Index = () => {
 };
 
 export default Index;
+
