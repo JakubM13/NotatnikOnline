@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
-import { ArrowRight, BookText, Lock, Users, Trash2 } from "lucide-react";
+import { ArrowRight, BookText, Lock, Users, Trash2, Edit2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ const Index = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(false);
+  const [editingNote, setEditingNote] = useState<null | { id: string; title: string; content: string; is_public: boolean }>(null);
 
   const { data: notes, refetch } = useQuery({
     queryKey: ["notes"],
@@ -40,23 +41,43 @@ const Index = () => {
     if (!user) return;
 
     try {
-      const { error } = await supabase
-        .from("notes")
-        .insert([
-          {
+      if (editingNote) {
+        const { error } = await supabase
+          .from("notes")
+          .update({
             title,
             content,
             is_public: isPublic,
-            user_id: user.id,
-          },
-        ]);
+          })
+          .eq("id", editingNote.id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Sukces!",
-        description: "Twoja notatka została utworzona.",
-      });
+        toast({
+          title: "Sukces!",
+          description: "Twoja notatka została zaktualizowana.",
+        });
+
+        setEditingNote(null);
+      } else {
+        const { error } = await supabase
+          .from("notes")
+          .insert([
+            {
+              title,
+              content,
+              is_public: isPublic,
+              user_id: user.id,
+            },
+          ]);
+
+        if (error) throw error;
+
+        toast({
+          title: "Sukces!",
+          description: "Twoja notatka została utworzona.",
+        });
+      }
 
       setTitle("");
       setContent("");
@@ -65,7 +86,7 @@ const Index = () => {
     } catch (error) {
       toast({
         title: "Błąd",
-        description: "Nie udało się utworzyć notatki. Spróbuj ponownie.",
+        description: "Nie udało się zapisać notatki. Spróbuj ponownie.",
         variant: "destructive",
       });
     }
@@ -95,6 +116,20 @@ const Index = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleEdit = (note: { id: string; title: string; content: string; is_public: boolean }) => {
+    setEditingNote(note);
+    setTitle(note.title);
+    setContent(note.content || "");
+    setIsPublic(note.is_public || false);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingNote(null);
+    setTitle("");
+    setContent("");
+    setIsPublic(false);
   };
 
   return (
@@ -155,7 +190,9 @@ const Index = () => {
         ) : (
           <div className="py-10">
             <div className="max-w-2xl mx-auto">
-              <h1 className="text-3xl font-bold mb-8">Utwórz nową notatkę</h1>
+              <h1 className="text-3xl font-bold mb-8">
+                {editingNote ? "Edytuj notatkę" : "Utwórz nową notatkę"}
+              </h1>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="title">Tytuł</Label>
@@ -183,9 +220,16 @@ const Index = () => {
                   />
                   <Label htmlFor="public">Ustaw notatkę jako publiczną</Label>
                 </div>
-                <Button type="submit" className="w-full">
-                  Utwórz notatkę
-                </Button>
+                <div className="flex gap-4">
+                  <Button type="submit" className="flex-1">
+                    {editingNote ? "Zapisz zmiany" : "Utwórz notatkę"}
+                  </Button>
+                  {editingNote && (
+                    <Button type="button" variant="outline" onClick={handleCancelEdit}>
+                      Anuluj edycję
+                    </Button>
+                  )}
+                </div>
               </form>
 
               {notes && notes.length > 0 && (
@@ -209,14 +253,24 @@ const Index = () => {
                               </span>
                             )}
                             {user.id === note.user_id && (
-                              <Button
-                                variant="destructive"
-                                size="icon"
-                                onClick={() => handleDelete(note.id, note.user_id)}
-                                className="h-8 w-8"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
+                              <div className="flex gap-2">
+                                <Button
+                                  variant="outline"
+                                  size="icon"
+                                  onClick={() => handleEdit(note)}
+                                  className="h-8 w-8"
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  variant="destructive"
+                                  size="icon"
+                                  onClick={() => handleDelete(note.id, note.user_id)}
+                                  className="h-8 w-8"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
                             )}
                           </div>
                         </div>
