@@ -23,7 +23,27 @@ npm run dev
 npm run build
 ```
 
-Skompilowane pliki znajdą się w folderze `dist`, który możesz następnie przenieść do folderu `wwwroot` w projekcie ASP.NET Core.
+## Hostowanie w ASP.NET Core
+
+1. Zbuduj aplikację React:
+```sh
+npm run build
+```
+
+2. Skopiuj zawartość folderu `dist` do folderu `wwwroot` w projekcie ASP.NET Core.
+
+3. W projekcie ASP.NET Core dodaj następującą konfigurację w `Program.cs`:
+```csharp
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.MapFallbackToFile("index.html");
+```
+
+4. Uruchom aplikację ASP.NET Core:
+```sh
+dotnet run
+```
 
 ## Technologie użyte w projekcie
 
@@ -37,3 +57,4 @@ Skompilowane pliki znajdą się w folderze `dist`, który możesz następnie prz
 
 Główne komponenty znajdują się w katalogu `src/components`.
 Style są zarządzane przez Tailwind CSS.
+
