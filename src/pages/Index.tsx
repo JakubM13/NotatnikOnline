@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
-import { ArrowRight, BookText, Lock, Users } from "lucide-react";
+import { ArrowRight, BookText, Lock, Users, Trash2 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,6 +66,32 @@ const Index = () => {
       toast({
         title: "Błąd",
         description: "Nie udało się utworzyć notatki. Spróbuj ponownie.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDelete = async (noteId: string, noteUserId: string) => {
+    if (!user || user.id !== noteUserId) return;
+
+    try {
+      const { error } = await supabase
+        .from("notes")
+        .delete()
+        .eq("id", noteId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Sukces!",
+        description: "Notatka została usunięta.",
+      });
+
+      refetch();
+    } catch (error) {
+      toast({
+        title: "Błąd",
+        description: "Nie udało się usunąć notatki. Spróbuj ponownie.",
         variant: "destructive",
       });
     }
@@ -176,11 +202,23 @@ const Index = () => {
                               {note.content && note.content.length > 100 ? "..." : ""}
                             </p>
                           </div>
-                          {note.is_public && (
-                            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
-                              Publiczna
-                            </span>
-                          )}
+                          <div className="flex items-center gap-2">
+                            {note.is_public && (
+                              <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
+                                Publiczna
+                              </span>
+                            )}
+                            {user.id === note.user_id && (
+                              <Button
+                                variant="destructive"
+                                size="icon"
+                                onClick={() => handleDelete(note.id, note.user_id)}
+                                className="h-8 w-8"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -196,4 +234,3 @@ const Index = () => {
 };
 
 export default Index;
-
