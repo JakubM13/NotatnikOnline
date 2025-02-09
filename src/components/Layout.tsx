@@ -21,7 +21,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       <header className="fixed top-0 left-0 right-0 z-50 glass">
         <nav className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Link to="/" className="text-xl font-semibold">
-            NotesHaven
+            NotatnikOnline
           </Link>
 
           {/* Mobile menu button */}
@@ -118,7 +118,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
       <footer className="glass mt-auto">
         <div className="container mx-auto px-4 py-6 text-center text-sm text-gray-600">
-          © {new Date().getFullYear()} NotesHaven. All rights reserved.
+          © {new Date().getFullYear()} NotatnikOnline. All rights reserved.
         </div>
       </footer>
     </div>
