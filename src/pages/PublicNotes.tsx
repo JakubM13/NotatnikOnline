@@ -1,11 +1,11 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { notes } from "@/lib/api";
 
 const PublicNotes = () => {
   const { user } = useAuth();
@@ -13,28 +13,12 @@ const PublicNotes = () => {
   
   const { data: publicNotes, isLoading, refetch } = useQuery({
     queryKey: ["public-notes"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("notes")
-        .select("*")
-        .eq("is_public", true)
-        .order("created_at", { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    },
+    queryFn: notes.getPublic,
   });
 
-  const handleDelete = async (noteId: string, noteUserId: string) => {
-    if (!user || user.id !== noteUserId) return;
-
+  const handleDelete = async (noteId: string) => {
     try {
-      const { error } = await supabase
-        .from("notes")
-        .delete()
-        .eq("id", noteId);
-
-      if (error) throw error;
+      await notes.delete(noteId);
 
       toast({
         title: "Sukces!",
@@ -67,14 +51,14 @@ const PublicNotes = () => {
                     <h2 className="text-xl font-semibold mb-2">{note.title}</h2>
                     <p className="text-gray-600">{note.content}</p>
                     <div className="text-sm text-gray-500 mt-4">
-                      {new Date(note.created_at).toLocaleDateString("pl-PL")}
+                      {new Date(note.createdAt).toLocaleDateString("pl-PL")}
                     </div>
                   </div>
-                  {user && user.id === note.user_id && (
+                  {user && user.id === note.userId && (
                     <Button
                       variant="destructive"
                       size="icon"
-                      onClick={() => handleDelete(note.id, note.user_id)}
+                      onClick={() => handleDelete(note.id)}
                       className="h-8 w-8"
                     >
                       <Trash2 className="h-4 w-4" />

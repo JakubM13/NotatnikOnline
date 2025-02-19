@@ -1,17 +1,16 @@
-
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import { ArrowRight, BookText, Lock, Users, Trash2, Edit2 } from "lucide-react";
-import { useAuth } from "@/lib/auth";
+import { useAuth } from "@/lib/auth-context";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
+import { notes } from "@/lib/api";
 
 const Index = () => {
   const { user } = useAuth();
@@ -19,19 +18,11 @@ const Index = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(false);
-  const [editingNote, setEditingNote] = useState<null | { id: string; title: string; content: string; is_public: boolean }>(null);
+  const [editingNote, setEditingNote] = useState<null | { id: string; title: string; content: string; isPublic: boolean }>(null);
 
-  const { data: notes, refetch } = useQuery({
+  const { data: userNotes, refetch } = useQuery({
     queryKey: ["notes"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("notes")
-        .select("*")
-        .order("created_at", { ascending: false });
-      
-      if (error) throw error;
-      return data;
-    },
+    queryFn: notes.getAll,
     enabled: !!user,
   });
 
@@ -42,16 +33,11 @@ const Index = () => {
 
     try {
       if (editingNote) {
-        const { error } = await supabase
-          .from("notes")
-          .update({
-            title,
-            content,
-            is_public: isPublic,
-          })
-          .eq("id", editingNote.id);
-
-        if (error) throw error;
+        await notes.update(editingNote.id, {
+          title,
+          content,
+          isPublic,
+        });
 
         toast({
           title: "Sukces!",
@@ -60,18 +46,11 @@ const Index = () => {
 
         setEditingNote(null);
       } else {
-        const { error } = await supabase
-          .from("notes")
-          .insert([
-            {
-              title,
-              content,
-              is_public: isPublic,
-              user_id: user.id,
-            },
-          ]);
-
-        if (error) throw error;
+        await notes.create({
+          title,
+          content,
+          isPublic,
+        });
 
         toast({
           title: "Sukces!",
@@ -83,7 +62,7 @@ const Index = () => {
       setContent("");
       setIsPublic(false);
       refetch();
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "Błąd",
         description: "Nie udało się zapisać notatki. Spróbuj ponownie.",
@@ -92,16 +71,9 @@ const Index = () => {
     }
   };
 
-  const handleDelete = async (noteId: string, noteUserId: string) => {
-    if (!user || user.id !== noteUserId) return;
-
+  const handleDelete = async (noteId: string) => {
     try {
-      const { error } = await supabase
-        .from("notes")
-        .delete()
-        .eq("id", noteId);
-
-      if (error) throw error;
+      await notes.delete(noteId);
 
       toast({
         title: "Sukces!",
@@ -118,11 +90,11 @@ const Index = () => {
     }
   };
 
-  const handleEdit = (note: { id: string; title: string; content: string; is_public: boolean }) => {
+  const handleEdit = (note: { id: string; title: string; content: string; isPublic: boolean }) => {
     setEditingNote(note);
     setTitle(note.title);
     setContent(note.content || "");
-    setIsPublic(note.is_public || false);
+    setIsPublic(note.isPublic);
   };
 
   const handleCancelEdit = () => {
@@ -232,11 +204,11 @@ const Index = () => {
                 </div>
               </form>
 
-              {notes && notes.length > 0 && (
+              {userNotes && userNotes.length > 0 && (
                 <div className="mt-12">
                   <h2 className="text-2xl font-bold mb-6">Twoje notatki</h2>
                   <div className="space-y-4">
-                    {notes.map((note) => (
+                    {userNotes.map((note) => (
                       <div key={note.id} className="glass p-4 rounded-lg">
                         <div className="flex items-start justify-between">
                           <div>
@@ -247,31 +219,29 @@ const Index = () => {
                             </p>
                           </div>
                           <div className="flex items-center gap-2">
-                            {note.is_public && (
+                            {note.isPublic && (
                               <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">
                                 Publiczna
                               </span>
                             )}
-                            {user.id === note.user_id && (
-                              <div className="flex gap-2">
-                                <Button
-                                  variant="outline"
-                                  size="icon"
-                                  onClick={() => handleEdit(note)}
-                                  className="h-8 w-8"
-                                >
-                                  <Edit2 className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="destructive"
-                                  size="icon"
-                                  onClick={() => handleDelete(note.id, note.user_id)}
-                                  className="h-8 w-8"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
-                              </div>
-                            )}
+                            <div className="flex gap-2">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => handleEdit(note)}
+                                className="h-8 w-8"
+                              >
+                                <Edit2 className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="icon"
+                                onClick={() => handleDelete(note.id)}
+                                className="h-8 w-8"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                       </div>

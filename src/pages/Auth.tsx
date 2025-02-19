@@ -5,9 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import Layout from '@/components/Layout';
-import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/lib/auth-context';
 import { useEffect } from 'react';
 
 const Auth = () => {
@@ -15,11 +14,10 @@ const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, login, register } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -33,30 +31,14 @@ const Auth = () => {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
+        await login(email, password);
       } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              username,
-              full_name: fullName,
-            },
-          },
+        await register(email, password, fullName);
+        toast({
+          title: "Rejestracja udana!",
+          description: "Możesz się teraz zalogować.",
         });
-        if (error) throw error;
-        else {
-          toast({
-            title: "Rejestracja udana!",
-            description: "Możesz się teraz zalogować.",
-          });
-          setIsLogin(true);
-        }
+        setIsLogin(true);
       }
     } catch (error: any) {
       toast({
@@ -78,28 +60,16 @@ const Auth = () => {
           </h1>
           <form onSubmit={handleAuth} className="space-y-4">
             {!isLogin && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="username">Nazwa użytkownika</Label>
-                  <Input
-                    id="username"
-                    placeholder="Twoja nazwa użytkownika"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="fullName">Imię i nazwisko</Label>
-                  <Input
-                    id="fullName"
-                    placeholder="Twoje imię i nazwisko"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    required
-                  />
-                </div>
-              </>
+              <div className="space-y-2">
+                <Label htmlFor="fullName">Imię i nazwisko</Label>
+                <Input
+                  id="fullName"
+                  placeholder="Twoje imię i nazwisko"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+              </div>
             )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
