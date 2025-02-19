@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
-import { notes } from "@/lib/api";
+import { notes, type Note } from "@/lib/api";
 
 const Index = () => {
   const { user } = useAuth();
@@ -18,7 +18,7 @@ const Index = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(false);
-  const [editingNote, setEditingNote] = useState<null | { id: string; title: string; content: string; isPublic: boolean }>(null);
+  const [editingNote, setEditingNote] = useState<null | { id: string; title: string; content?: string; isPublic: boolean }>(null);
 
   const { data: userNotes, refetch } = useQuery({
     queryKey: ["notes"],
@@ -90,8 +90,13 @@ const Index = () => {
     }
   };
 
-  const handleEdit = (note: { id: string; title: string; content: string; isPublic: boolean }) => {
-    setEditingNote(note);
+  const handleEdit = (note: Note) => {
+    setEditingNote({
+      id: note.id,
+      title: note.title,
+      content: note.content || "",
+      isPublic: note.isPublic,
+    });
     setTitle(note.title);
     setContent(note.content || "");
     setIsPublic(note.isPublic);
