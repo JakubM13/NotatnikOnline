@@ -1,7 +1,6 @@
-
 import axios from "axios";
 
-const API_URL = "https://localhost:5001/api";
+const API_URL = "/api";
 
 export interface LoginData {
   email: string;

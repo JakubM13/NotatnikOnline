@@ -52,15 +52,6 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add CORS
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", builder =>
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader());
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -71,10 +62,18 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+
+// Dodaj obsługę plików statycznych przed routingiem
+app.UseDefaultFiles(); // Dodane
+app.UseStaticFiles(); // Dodane
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
+// Dodaj obsługę routingu SPA
+app.MapFallbackToFile("index.html"); // Dodane
 
 // Create database and apply migrations
 using (var scope = app.Services.CreateScope())
