@@ -1,11 +1,44 @@
 
 # NotatnikOnline - System zarządzania notatkami
 
-## Jak uruchomić lokalnie
+## Wymagania systemowe
 
-1. Sklonuj repozytorium:
+- .NET 8 SDK
+- Node.js i npm (dla frontendu)
+- Visual Studio 2022 lub Visual Studio Code
+- SQLite (baza danych)
+
+## Struktura projektu
+
+- `NotatnikOnline.Web` - Frontend (React)
+- `NotatnikOnline.API` - Backend (ASP.NET Core)
+
+## Jak uruchomić projekt
+
+### Backend (ASP.NET Core API)
+
+1. Przejdź do katalogu API:
 ```sh
-git clone <URL_REPOZYTORIUM>
+cd NotatnikOnline.API
+```
+
+2. Uruchom migracje bazy danych:
+```sh
+dotnet ef database update
+```
+
+3. Uruchom API:
+```sh
+dotnet run
+```
+
+API będzie dostępne pod adresem: https://localhost:5001
+
+### Frontend (React)
+
+1. Przejdź do katalogu Web:
+```sh
+cd NotatnikOnline.Web
 ```
 
 2. Zainstaluj zależności:
@@ -13,42 +46,28 @@ git clone <URL_REPOZYTORIUM>
 npm install
 ```
 
-3. Uruchom aplikację w trybie developerskim:
+3. Uruchom aplikację:
 ```sh
 npm run dev
 ```
 
-4. Aby zbudować wersję produkcyjną:
-```sh
-npm run build
-```
+Frontend będzie dostępny pod adresem: http://localhost:8080
 
 ## Technologie
 
+### Backend
+- ASP.NET Core 8
+- Entity Framework Core
+- SQLite
+- AutoMapper
+- Identity dla uwierzytelniania
+
+### Frontend
 - React 18
 - TypeScript
 - Vite
 - Tailwind CSS
 - shadcn/ui (komponenty UI)
-- Supabase (baza danych)
 - React Router
 - React Query
 
-## Struktura projektu
-
-```
-src/
-  ├── components/     # Komponenty React
-  ├── pages/         # Komponenty stron
-  ├── lib/           # Biblioteki i utilities
-  ├── integrations/  # Integracje (np. Supabase)
-  └── types/         # Definicje TypeScript
-```
-
-## Funkcjonalności
-
-- System użytkowników (rejestracja, logowanie)
-- Tworzenie, edycja i usuwanie notatek
-- Możliwość ustawienia notatek jako publiczne/prywatne
-- Przeglądanie publicznych notatek innych użytkowników
-- Responsywny interfejs użytkownika
