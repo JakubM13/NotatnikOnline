@@ -1,0 +1,139 @@
+
+# NotatnikOnline - Dokumentacja Techniczna
+
+## 1. Opis aplikacji
+NotatnikOnline to aplikacja webowa do zarządzania notatkami, oferująca bezpieczne i intuicyjne środowisko do tworzenia, edycji i organizacji notatek. System umożliwia użytkownikom przechowywanie prywatnych notatek oraz udostępnianie wybranych treści publicznie.
+
+## 2. Technologie
+
+### Frontend:
+- React 18.3.1
+- TypeScript
+- Vite (system budowania)
+- Tailwind CSS (stylowanie)
+- shadcn/ui (komponenty interfejsu)
+- React Router 6.26.2 (nawigacja)
+- Tanstack Query 5.56.2 (zarządzanie stanem)
+- Supabase.js 2.48.1 (integracja z backendem)
+
+### Backend:
+- Supabase (Backend as a Service)
+- PostgreSQL (baza danych)
+- Row Level Security (bezpieczeństwo danych)
+- Uwierzytelnianie i autoryzacja Supabase
+
+## 3. Funkcjonalności
+
+### System użytkowników:
+- Rejestracja nowych użytkowników
+- Logowanie do istniejącego konta
+- Wylogowywanie
+- Zarządzanie profilem użytkownika
+- Bezpieczne przechowywanie danych uwierzytelniających
+
+### Zarządzanie notatkami:
+- Tworzenie nowych notatek
+- Edycja istniejących notatek
+- Usuwanie notatek
+- Oznaczanie notatek jako publiczne/prywatne
+- Wyświetlanie publicznych notatek innych użytkowników
+
+### Interfejs użytkownika:
+- Responsywny design (mobile-first)
+- Intuicyjna nawigacja
+- System powiadomień (toasts)
+- Ciemny/jasny motyw
+- Widok listy notatek z filtrowaniem
+
+## 4. Struktura projektu
+
+```
+NotatnikOnline/
+├── src/
+│   ├── components/        # Komponenty React
+│   │   ├── ui/           # Komponenty interfejsu użytkownika
+│   │   └── Layout.tsx    # Główny układ aplikacji
+│   ├── hooks/            # Hooki React
+│   ├── lib/              # Funkcje pomocnicze
+│   ├── pages/            # Komponenty stron
+│   └── types/            # Definicje TypeScript
+├── public/               # Zasoby statyczne
+└── vite.config.ts        # Konfiguracja Vite
+```
+
+## 5. Instalacja i uruchomienie
+
+### Wymagania:
+- Node.js (wersja 14 lub wyższa)
+- npm lub yarn
+- Dostęp do projektu Supabase
+
+### Kroki instalacji:
+
+1. Klonowanie repozytorium:
+```bash
+git clone [adres-repozytorium]
+cd notatnik-online
+```
+
+2. Instalacja zależności:
+```bash
+npm install
+```
+
+3. Konfiguracja zmiennych środowiskowych:
+Utwórz plik .env z następującymi zmiennymi:
+```
+VITE_SUPABASE_URL=twój-url-supabase
+VITE_SUPABASE_ANON_KEY=twój-klucz-supabase
+```
+
+4. Uruchomienie aplikacji:
+```bash
+npm run dev
+```
+
+Aplikacja będzie dostępna pod adresem: http://localhost:8080
+
+## 6. Bezpieczeństwo
+
+### Zabezpieczenia:
+- Szyfrowanie danych użytkowników
+- Uwierzytelnianie poprzez Supabase
+- Row Level Security w bazie danych
+- Walidacja danych wejściowych
+- Bezpieczne zarządzanie sesjami
+- CORS i zabezpieczenia API
+
+### Dobre praktyki:
+- Regularne aktualizacje zależności
+- Przeglądy kodu
+- Testowanie zabezpieczeń
+- Monitorowanie błędów
+- Backup danych
+
+## 7. Wsparcie i rozwój
+
+### Zgłaszanie problemów:
+- System śledzenia błędów na GitHub
+- Kanał wsparcia Discord
+- Dokumentacja dla deweloperów
+
+### Rozwój aplikacji:
+- Standardy kodowania
+- Proces Code Review
+- Continuous Integration
+- Automatyczne testy
+- Wersjonowanie semantyczne
+
+### Kontakt:
+- Email: support@notatnikonline.com
+- Discord: [link do serwera]
+- GitHub Issues
+
+## 8. Licencja
+Aplikacja jest udostępniana na licencji MIT. Szczegółowe informacje znajdują się w pliku LICENSE.
+
+---
+Wersja dokumentacji: 1.0.0
+Data ostatniej aktualizacji: [aktualna data]
